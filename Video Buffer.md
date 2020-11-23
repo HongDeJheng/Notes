@@ -59,11 +59,11 @@ bit-stream. She first creates three components and configure them separately. Af
 5. Manage data transferring between single transmit unit and multiple receive unit (1-to-many).
 6. Support hook function entry for transmit unit.
 7. Support hook function entry for receive unit.
-8. Support ==buffered== write function for transmit unit.
-9. Support ==non-buffered== ==blocking== write function for transmit unit.
-10. Support ==non-buffered== ==non-blocking== write function for transmit unit.
-11. Support ==buffered== ==blocking== read function for receive unit.
-12. Support ==buffered== ==non-blocking== read function for receive unit.
+8. Support `buffered` write function for transmit unit.
+9. Support `non-buffered` `blocking` write function for transmit unit.
+10. Support `non-buffered` `non-blocking` write function for transmit unit.
+11. Support `buffered` `blocking` read function for receive unit.
+12. Support `buffered` `non-blocking` read function for receive unit.
 #### Notes
 1. Buffered v.s. Non-buffered
     * Non-buffered I/O simply means that don't use any buffer while reading or writing. (read / write char by char)
@@ -80,24 +80,26 @@ bit-stream. She first creates three components and configure them separately. Af
 
 ## Video Buffer Management
 ![HiSilicon video buffer system](https://i.imgur.com/D4aIxQd.png)
+
 This figure shows the framework of video buffer management of HiSilicon. Typically there are two independent parts, **buffer pool allocation** and **buffer transfer**.
 
-- In the beginning, user specifies two buffer *pool A* and *pool B* where each pool contains a number of video buffer with a consistent size. The VB modules allocate blocks from a continuous memory spaces.
-- First, *VI* device asks *VB* for a empty buffer *B~m~*, and then writes data to this buffer. 
-- After buffer was filled, it transfer this buffer to *VPSS* module. 
-- *VPSS* module requests three empty buffers call *B~i~*, *B~j~*, *B~k~* and fill data to them. 
-- After writing is finished, *VPSS* release buffer *B~m~* and transfer *B~i~*, *B~j~*, and *B~k~* to module *VENC*, *VDA*, and *VO* respectively.
-- Finally the module will release *B~i~*, *B~j~*, and *B~k~* after they finish their jobs.
+* In the beginning, user specifies two buffer *pool A* and *pool B* where each pool contains a number of video buffer with a consistent size. The VB modules allocate blocks from a continuous memory spaces.
+* First, *VI* device asks *VB* for a empty buffer *B~m~*, and then writes data to this buffer. 
+* After buffer was filled, it transfer this buffer to *VPSS* module. 
+* *VPSS* module requests three empty buffers call *B~i~*, *B~j~*, *B~k~* and fill data to them. 
+* After writing is finished, *VPSS* release buffer *B~m~* and transfer *B~i~*, *B~j~*, and *B~k~* to module *VENC*, *VDA*, and *VO* respectively.
+* Finally the module will release *B~i~*, *B~j~*, and *B~k~* after they finish their jobs.
 
 There's an important action order, *VPSS* first requests three empty buffers, writing these three buffers from *B~m~*, and then **release *B~m~*** while writing finish.
 
 ## Inter-communication
-![](https://i.imgur.com/hUBOoY1.png =x350)
+<img src="https://i.imgur.com/hUBOoY1.png" height="350"></img>
+
 This figure shows the concept of binder which is responsible for inter-communications. The concept of binder is very similar to socket concept (ip address + port) of computer networking.
-- The squares are writer ports
-- The circles are reader ports
-- One writer port can transmit data to multiple reader ports
-- One reader port can only receive date from one writer port in a time
+* The squares are writer ports
+* The circles are reader ports
+* One writer port can transmit data to multiple reader ports
+* One reader port can only receive date from one writer port in a time
 
 Note that every hardware module can be replaced by a piece of software code in user space. Therefore, Binder system should have capability of being controlled from user space.
 
