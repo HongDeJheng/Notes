@@ -67,6 +67,14 @@
     * The variable that pass into a function should be exactly the same to definition
     * e.g. `ktrace_alloc(int nentries, unsigned int __nocast sleep)` 
     sleep should be `unsigned int`
+* Notes:
+    * `noderef` : pointer address
+    * `address_space(n)`
+        * `address_space(0)` : Kernel Space
+        * `address_space(1)` : User Space
+        * `address_space(2)` : I/O Space
+        * `address_space(3)` : CPU Space
+        * `address_space(4)` : RCU
     
 * [Reference](https://www.twblogs.net/a/5c45e178bd9eee35b21eefb9)    
 
