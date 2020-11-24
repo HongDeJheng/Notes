@@ -1,19 +1,30 @@
 # C programming
 ## size_t, ssize_t, loff_t
-* size_t (`typedef __kernel_size_t size_t`)
+* size_t
+     ```C
+      typedef __kernel_size_t size_t
+     ```
     * for sparc 64 bit : `unsigned long`
     * for sparc 32 bit : `unsigned int`
-* ssize_t (`typedef __kernel_ssize_t ssize_t`)
+* ssize_t 
+    ```C
+     typedef __kernel_ssize_t ssize_t
+    ```
     * for sparc 64 bit : `long`
     * for sparc 32 bit : `int`
     * ssize_t = `signed` size_t
-* loff_t (`typedef __kernel_loff_t loff_t`)
+* loff_t 
+    ```C
+     typedef __kernel_loff_t loff_t
+    ```
     * `long long`
 
 ## offsetof, container_of
 * offsetof 
     * `<linux/stddef.h>`
-    * `#define offsetof(TYPE, MEMBER) ( (size_t) &((TYPE *)0)->MEMBER )`
+    * ```C
+      #define offsetof(TYPE, MEMBER) ( (size_t) &((TYPE *)0)->MEMBER )
+      ```
     * Get the offset of a structure member (distance from member to struct head)
 * container_of
     * `<linux/kernel.h>`
