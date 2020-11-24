@@ -90,3 +90,23 @@
 * [Reference](https://www.twblogs.net/a/5c45e178bd9eee35b21eefb9)    
 
 ## copy_from_user, copy_to_user
+* `copy_from_user`
+    ```C
+    unsigned long copy_from_user(void *to, const void *from, unsigned long n)
+    ```
+    * `to` : destination - Kernal Space
+    * `from` : source - User Space
+    * `n` : bytes of data to be copied
+    * return value : 
+        * success : 0
+        * fail : bytes that failed (e.g. total `n` bytes, only success `10`, return `n - 10`)
+* `copy_to_user`
+    ```C
+    unsigned long copy_to_user(void *to, const void *from, unsigned long n)
+    ```
+    * `to` : destination - User Space
+    * `from` : source - Kernel Space
+    * `n` : bytse of data to be copied
+    * return value : 
+        * success : 0
+        * fail : bytes that failed (e.g. total `n` bytes, only success `10`, return `n - 10`)
