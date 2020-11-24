@@ -1,4 +1,4 @@
-# C programming
+# C programming notes
 ## size_t, ssize_t, loff_t
 * size_t
      ```C
@@ -90,23 +90,123 @@
 * [Reference](https://www.twblogs.net/a/5c45e178bd9eee35b21eefb9)    
 
 ## copy_from_user, copy_to_user
-* `copy_from_user`
-    ```C
-    unsigned long copy_from_user(void *to, const void *from, unsigned long n)
-    ```
-    * `to` : destination - Kernal Space
-    * `from` : source - User Space
-    * `n` : bytes of data to be copied
-    * return value : 
-        * success : 0
-        * fail : bytes that failed (e.g. total `n` bytes, only success `10`, return `n - 10`)
-* `copy_to_user`
-    ```C
-    unsigned long copy_to_user(void *to, const void *from, unsigned long n)
-    ```
-    * `to` : destination - User Space
-    * `from` : source - Kernel Space
-    * `n` : bytse of data to be copied
-    * return value : 
-        * success : 0
-        * fail : bytes that failed (e.g. total `n` bytes, only success `10`, return `n - 10`)
+### `copy_from_user`
+```C
+unsigned long copy_from_user(void *to, const void *from, unsigned long n)
+```
+* `to` : destination - Kernal Space
+* `from` : source - User Space
+* `n` : bytes of data to be copied
+* return value : 
+    * success : 0
+    * fail : bytes that failed (e.g. total `n` bytes, only success `10`, return `n - 10`)
+### `copy_to_user`
+```C
+unsigned long copy_to_user(void *to, const void *from, unsigned long n)
+```
+* `to` : destination - User Space
+* `from` : source - Kernel Space
+* `n` : bytse of data to be copied
+* return value : 
+    * success : 0
+    * fail : bytes that failed (e.g. total `n` bytes, only success `10`, return `n - 10`)
+
+## `extern`, `static`, `inline`, `const`, `global`
+### Compiling, linking and foward declaration
+* While compiling, compiler only see the source file that it is going to compile, compiler is not able to see other related (linked/dependent) source file or library.
+* Thus, for each source file, we need to have declaration of any function or variable (full definition or only type declaration).
+* Schematic diagram
+  ```
+  +---------------------------------------------------------------+
+  |                                                               |
+  |   source code             object code            executable   |
+  |                                                               |
+  |                                                               |
+  |  +----------+             +----------+                        |
+  |  |          |   compile   |          |                        |
+  |  |  main.c  +------------->  main.o  +-+                      |
+  |  |          |             |          | |        +-----------+ |
+  |  +----------+             +----------+ |  link  |           | |
+  |                                        +-------->   a.out   | |
+  |  +----------+             +----------+ |        |           | |     
+  |  |          |   compile   |          | |        +-----------+ |   
+  |  |  test.c  +------------->  test.o  +-+                      |   
+  |  |          |             |          |                        |
+  |  +----------+             +----------+                        |
+  |                                                               |
+  +---------------------------------------------------------------+
+  ```
+* Notes: header file won't be compiled alone, it will be `#include` into other source code (like paste on), and then compile with the source code.
+
+### `extern`
+* `extern` means __declare__ but no __definition__
+* When we need to use variables defined by external source file, we need to declare the variable as `extern` with the `type` of referenced variable.
+  * e.g.
+      * test.c
+      ```C
+      int a = 10;
+      ```
+      * main.c
+      ```C
+      extern int a;
+  
+      int main()
+      {
+          printf("a = %d\n", a);    // a = 10
+          a++;
+          printf("a = %d\n", a);    // a = 11
+          a = 100;
+          printf("a = %d\n", a);    // a = 100
+      }
+      ```
+  * `extern` can only access global variable
+  * The variable with `extern` must have the same type as the referenced variable.
+  * `extern` variable cannot be initialized
+* We can also use `extern` with header file
+    * e.g.
+        * test.h
+          ```C
+          extern int a;
+          ```
+        * test.c
+          ```C
+          int a = 10;
+          ```
+        * main.c
+          ```C
+          #include "test.h"
+          
+          int main()
+          {
+              printf("a = %d\n", a);    // a = 10
+              a++;
+              printf("a = %d\n", a);    // a = 11
+              a = 100;
+              printf("a = %d\n", a);    // a = 100
+          }
+          ```
+  * In fact, the global variables that appear in header file basically are `extern` variable.
+  * If we declare global variables that are not `extern` or `static`, and `#include` it to source file, we might get `multiple definition` error.
+* `extern` variable in function
+    * ```C
+      int test(){
+          extern int a;
+          ...
+      }
+      
+      int main()
+      {
+          a = 30;    // Error!
+          ...
+      }
+      ```
+    * If we use `extern` in function, the scope of the variable is same as function's local variable.
+
+### `static`
+* In _C programming_, `static` has two main effect : 
+    1. `static` global variable and function:
+        * Variable cannot be accessed by external file, and also won't affect other file's namespace.
+        * Internal linkage
+    2. `static` local variable : 
+        * Expand the lifetime of variable as same as global variable.
+        * For whole program, unlike local variable in function that we can have plenty of variables with the same name, only __one__ variable with that name exists.
